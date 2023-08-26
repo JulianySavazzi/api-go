@@ -3,10 +3,13 @@ package entity
 
 import "github.com/google/uuid"
 
+// a interface define o contrato
 // repositorio para acessar o banco de dados
 type ProductRepository interface {
-	Create(Product *Product) error //recebe o produto ou mostra o erro
-	findAll() ([]*Product, error)  //lista os produtos ou mostra o erro
+	//recebe o produto ou mostra o erro
+	Create(Product *Product) error
+	//lista os produtos ou mostra o erro
+	FindAll() ([]*Product, error)
 }
 
 // vamos criar uma struct que funcionara como uma classe

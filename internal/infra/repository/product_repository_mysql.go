@@ -16,10 +16,10 @@ func NewProductRepositoryMysql(db *sql.DB) *ProductRepositoryMysql {
 	return &ProductRepositoryMysql{DB: db}
 }
 
-// inserir dados no banco de dados -> metodo create da struct produto
+// metodo create da struct produto -> inserir dados no banco de dados
 func (r *ProductRepositoryMysql) Create(product *entity.Product) error {
 	// o Exec está passando o comando SQL insert
-	// o _ está ignorando a quantidade de erros, se quisessemos mostrar, teriamos que colocar uma variavel
+	// o _ está ignorando os detalhes dos erros, se quisessemos mostrar, teriamos que colocar uma variavel
 	_, err := r.DB.Exec("Insert into products (id, name, price) values(?,?,?)",
 		product.ID, product.Name, product.Price)
 	//se acontecer algum erro, retorna o erro, se não retorna vazio
@@ -30,13 +30,15 @@ func (r *ProductRepositoryMysql) Create(product *entity.Product) error {
 }
 
 // metodo findAll da struct produto
-func (r *ProductRepositoryMysql) findAll() ([]*entity.Product, error) {
+func (r *ProductRepositoryMysql) FindAll() ([]*entity.Product, error) {
 	//será mostrado o erro e a linha -> rows, err
+	//usamos parametro de erro no go, pq ele nao tem try catch
 	rows, err := r.DB.Query("select id, name, price from products")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close() //é executado depois de tudo que está no escopo (dentro desse metodo)
+	//bom para liberar memoria
 
 	var products []*entity.Product
 	for rows.Next() {
