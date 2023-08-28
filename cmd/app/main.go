@@ -11,12 +11,13 @@ import (
 	"github.com/JulianySavazzi/api-go/internal/usecase"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-chi/chi/v5"
+	//"github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	//criar conexao com banco de dados
 	//também vamos usar docker
-	db, err := sql.Open("mysql", "root:root@tcp(host.docker.internal:3306/products)")
+	db, err := sql.Open("mysql", "root:root@tcp(host.docker.internal:3306)/products")
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +37,7 @@ func main() {
 
 	//servidor http -> executa o servidor web
 	//go rotines -> para não interromper a execucao do servidor antes de rodar td o codigo
-	go http.ListenAndServe(":8080", r)
+	go http.ListenAndServe(":8000", r)
 
 	//canal de comunicacao
 	//criar canal que consome mensagens kafka
@@ -54,3 +55,14 @@ func main() {
 		_, err = createProductUseCase.Execute(dto)
 	}
 }
+
+/*
+
+--- testar no kafka ---
+
+docker-compose exec kafka bash
+kafka-topics --botstrap-server=localhost:9092 --topic=product --create
+kafka-console-producer --botstrap-server=localhost:9092 --topic=product
+{"neme": "My Product2", "price": 200}
+
+*/
