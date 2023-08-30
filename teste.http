@@ -3,5 +3,7 @@ Content-Type: aplication/json
 
 {"name": "My product", "price": 100}
 
+###
+
 GET http://localhost:8000/products
 Content-Type: aplication/json

@@ -11,7 +11,7 @@ import (
 	"github.com/JulianySavazzi/api-go/internal/usecase"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-chi/chi/v5"
-	//"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {

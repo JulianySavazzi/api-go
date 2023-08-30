@@ -3,27 +3,27 @@ version: '3'
 #no docker-compose adicionamos os serviços que serão usados no projeto
 services:
 #container da aplicação -> para o go ter acesso aos outros serviços no docker
-goapp:
-  build: .
-  volumes:
-    .:/go/app
-  plataform: linux/amd64
-  ports:
-    - "8000:8000"
-  extra_hosts:
-    - "host.docker.internal:172.17.0.1" 
+  goapp:
+    build: .
+    volumes:
+      - .:/go/app
+    platform: linux/amd64
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1" 
 
 #banco de dados
   mysql:
     image: mysql:5.7
     container_name: mysql
+    ports:
+      - 3306:3306
     #restart: always
     environment: 
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: products
-      MYSQL_PASSWORD: root
-    ports:
-      - 3306:3306
+    #  MYSQL_PASSWORD: root
     # salvar dados do bd na partição
     volumes:
       - ./mysql:/var/lib/mysql
@@ -32,7 +32,7 @@ goapp:
 
 #gerenciador das mensagens e stream de dados no kafka
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.3.0 
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -43,7 +43,7 @@ goapp:
 
 #kafka é um serviço de mensageria e stream de dados
   kafka:
-    image: confluentinc/cp-server:latest
+    image: confluentinc/cp-server:7.3.0
     hostname: kafka
     container_name: kafka
     depends_on:
@@ -54,8 +54,6 @@ goapp:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      #KAFKA_LISTENER_SECURITY_PROCOL_MAP: PLAINTEXT:PLAINTEXT, PLAINTEXT_HOST:PLAINTEXT, INSIDE:PLAINTEXT, OUTSIDE:PLAINTEXT 
-      #KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
@@ -63,6 +61,27 @@ goapp:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    volumes:
+      - ./kafka:/var/lib/kafka
+
+#app gerenciador do kafka
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.3.0
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - kafka
+    ports:
+      - "9021:9021"
+    environment:
+      #CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:29092'
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
+      #CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9021'
+      CONTROL_CENTER_REAPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021
 
 
 
