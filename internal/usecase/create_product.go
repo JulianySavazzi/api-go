@@ -28,6 +28,7 @@ func NewCreateProductUseCase(productRepository entity.ProductRepository) *Create
 	return &CreateProductUseCase{ProductRepository: productRepository}
 }
 
+// método para criar produto
 func (u *CreateProductUseCase) Execute(input CreateProductInputDto) (*CreateProductOutputDto, error) {
 	// criar produto
 	product := entity.NewProduct(input.Name, input.Price)
@@ -42,3 +43,7 @@ func (u *CreateProductUseCase) Execute(input CreateProductInputDto) (*CreateProd
 		Price: product.Price,
 	}, nil
 }
+
+//metodo atualizar
+
+//metodo deletar

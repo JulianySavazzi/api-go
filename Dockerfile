@@ -7,8 +7,13 @@ RUN apt-get update && apt-get install -y librdkafka-dev
 
 CMD ["tail", "-f", "/dev/null"]
 
+#Comandos bash:
+
 #subir o container:
 # docker-compose up -d
+
+#listar serviços em execução
+# docker ps
 
 #excutar e trabalhar com o banco de dados
 #docker-compose exec mysql bash
@@ -24,10 +29,17 @@ CMD ["tail", "-f", "/dev/null"]
 #criar topico product
 #kafka-topics --bootstrap-server=localhost:9092 --topic=product --create
 
+#listar topicos
+#kafka-topics --list --bootstrap-server=localhost:9092
+
 #subir a aplicação e executar o app
 #docker-compose exec goapp bash
 #go run cmd/app/main.go
 
-#testar kafka
+#testar kafka -> enviar mensagem
 #kafka-console-producer --bootstrap-server=localhost:9092 --topic=product {"name": "product 2", "price": 20}
-#kafka-console-producer --bootstrap-server=localhost:9094 --topic=product {"name": "product 2", "price": 200}
+
+#ler mensagens gravadas no topico product
+#kafka-console-consumer --bootstrap-server localhost:9092 --topic product --from-beginning
+
+
