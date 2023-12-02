@@ -1,4 +1,4 @@
-API REST EM GO
+API REST EM GO - Live Full Cycle
 
 criando aplicacao que consegue se conectar com adaptadores, sem modificar o nucleo da aplicacao;
 
